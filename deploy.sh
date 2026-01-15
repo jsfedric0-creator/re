@@ -47,4 +47,30 @@ else
       --docker $IMAGE_NAME \
       --ports 8080:http \
       --routes /:8080 \
-      --
+      --regions $REGIONS \
+      --instance-type nano \
+      --min-scale 2 \
+      --max-scale 5 \
+      --env TZ=UTC \
+      --env NGINX_WORKER_PROCESSES=auto \
+      --env CACHE_SIZE=1g
+fi
+
+echo ""
+echo -e "${GREEN}✅ Deployment initiated!${NC}"
+echo ""
+echo -e "${GREEN}📋 Next steps:${NC}"
+echo "1. Wait for deployment to complete:"
+echo "   koyeb service get $APP_NAME/proxy"
+echo ""
+echo "2. Check logs:"
+echo "   koyeb service logs $APP_NAME/proxy"
+echo ""
+echo "3. Get app URL:"
+echo "   koyeb app describe $APP_NAME"
+echo ""
+echo "4. Monitor health:"
+echo "   curl https://$APP_NAME.koyeb.app/health"
+echo ""
+echo "5. Access playlist:"
+echo "   https://$APP_NAME.koyeb.app/playlist.m3u"
