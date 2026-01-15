@@ -1,38 +1,26 @@
 version: '3.8'
 
 services:
-  bein-proxy:
+  restream:
     build: .
-    container_name: bein-iptv-proxy
+    container_name: bein-restream
     restart: unless-stopped
     ports:
-      - "8080:8080"
-    environment:
-      - NGINX_WORKER_PROCESSES=2
-      - NGINX_WORKER_CONNECTIONS=1024
-      - CACHE_SIZE=512m
-      - CACHE_TIME=5m
-      - TZ=UTC
+      - "1935:1935"  # RTMP
+      - "8080:8080"  # HTTP/HLS
     volumes:
-      - ./cache:/tmp/nginx-cache
+      - ./hls:/tmp/hls
       - ./logs:/var/log/nginx
+    environment:
+      - TZ=UTC
+    networks:
+      - restream-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
-  # Optional: Add a simple dashboard
-  dashboard:
-    image: nginx:alpine
-    volumes:
-      - ./dashboard.html:/usr/share/nginx/html/index.html
-    ports:
-      - "8081:80"
-    depends_on:
-      - bein-proxy
+networks:
+  restream-net:
+    driver: bridge
