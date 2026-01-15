@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    environment:
+      - APP_NAME=Swift Elysha LiveDash
+      - STREAM_SOURCE=http://135.125.109.73:9000/beinsporten1_.m3u8
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./koyeb.conf:/etc/nginx/conf.d/default.conf
+      - ./index.html:/usr/share/nginx/html/index.html
+      - ./playlist.m3u:/usr/share/nginx/html/playlist.m3u
