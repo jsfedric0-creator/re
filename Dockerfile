@@ -1,11 +1,7 @@
 FROM nginx:alpine
 
-# Install required modules
-RUN apk update && apk add --no-cache \
-    nginx-mod-http-lua \
-    nginx-mod-http-set-misc \
-    curl \
-    && rm -rf /var/cache/apk/*
+# Install curl for health checks
+RUN apk add --no-cache curl
 
 # Copy configuration
 COPY nginx.conf /etc/nginx/nginx.conf
