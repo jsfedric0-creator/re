@@ -1,17 +1,12 @@
 FROM nginx:alpine
 
-# Install curl for health checks
-RUN apk add --no-cache curl
-
-# Copy configuration
+# نسخ التكوين
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Create cache directory
-RUN mkdir -p /tmp/nginx-cache && chmod 777 /tmp/nginx-cache
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8080/health || exit 1
+# التأكد من صلاحيات المجلدات
+RUN mkdir -p /var/cache/nginx && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chmod -R 755 /var/cache/nginx
 
 EXPOSE 8080
 
