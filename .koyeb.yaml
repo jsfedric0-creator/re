@@ -1,0 +1,65 @@
+name: bein-iptv-proxy
+app:
+  name: bein-proxy
+  regions: ["fra", "iad", "sin"]  # Frankfurt, Washington DC, Singapore
+  domains:
+    - custom: "bein-proxy.yourdomain.com"  # Optional: add your domain
+  
+services:
+  - name: proxy
+    type: web
+    ports:
+      - port: 8080
+        http_path: /health
+    scaling:
+      min: 2
+      max: 5
+      target_cpu_utilization: 70
+    autoscaling:
+      metric: cpu
+      target: 70
+    healthcheck:
+      http:
+        path: /health
+        port: 8080
+        initial_delay_seconds: 30
+        period_seconds: 15
+        timeout_seconds: 10
+        success_threshold: 1
+        failure_threshold: 3
+    env:
+      - name: NGINX_WORKER_PROCESSES
+        value: "auto"
+      - name: NGINX_WORKER_CONNECTIONS
+        value: "1024"
+      - name: CACHE_SIZE
+        value: "1g"
+      - name: CACHE_TIME
+        value: "5m"
+      - name: TZ
+        value: "UTC"
+    docker:
+      image: ghcr.io/yourusername/bein-iptv-proxy:latest
+    volumes:
+      - path: /tmp/nginx-cache
+        size_gib: 2
+    resources:
+      instance_types:
+        - nano
+        - micro
+      cpu: [100, 500]
+      memory: [512, 1024]
+    routes:
+      - path: "/"
+        port: 8080
+      - path: "/playlist.m3u"
+        port: 8080
+      - path: "/stream/"
+        port: 8080
+      - path: "/bein-"
+        port: 8080
+
+secrets:
+  - name: proxy-config
+    value: |
+      # Optional: Add any sensitive configuration here
