@@ -1,39 +1,18 @@
-name: bein-iptv-hidden
-app:
-  name: bein-hidden-proxy
-  regions: ["fra", "iad", "sin", "nyc"]
-  
+name: bein-streaming
 services:
-  - name: proxy
+  - name: streaming
     type: web
     ports:
       - port: 8080
         http_path: /health
     docker:
-      image: yourusername/bein-hidden-proxy:latest
-    env:
-      - name: TZ
-        value: UTC
-      - name: NGINX_ENVSUBST_OUTPUT_DIR
-        value: /etc/nginx
+      image: yourusername/bein-streaming:latest
     scaling:
-      min: 2
-      max: 5
-      target_cpu_utilization: 70
+      min: 1
+      max: 3
     healthcheck:
       http:
         path: /health
         port: 8080
         initial_delay_seconds: 30
         period_seconds: 15
-        timeout_seconds: 10
-        success_threshold: 1
-        failure_threshold: 3
-    resources:
-      instance_types:
-        - micro
-      cpu: [250, 1000]
-      memory: [512, 2048]
-    volumes:
-      - path: /tmp/nginx-cache
-        size_gib: 3
